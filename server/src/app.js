@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -13,7 +14,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
-// global error middleware
+app.use("/api/users", userRoutes);
+
 app.use(errorHandler);
 
 export default app;
