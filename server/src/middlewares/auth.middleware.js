@@ -6,33 +6,38 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 import { ApiError } from "../utils/ApiError.js";
 
-export const verifyJWT = asyncHandler(async (req, res, next) => {
+export const verifyJWT = asyncHandler(
 
-  const authHeader = req.headers.authorization;
+  async (req, res, next) => {
 
-  if (
-    !authHeader ||
-    !authHeader.startsWith("Bearer ")
-  ) {
-    throw new ApiError(401, "Unauthorized");
+    const authHeader = req.headers.authorization;
+
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ")
+    ) {
+      throw new ApiError(401, "Unauthorized");
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    // 🔥 fetch fresh user
+    const user = await User.findById(decoded.id)
+      .select("-password");
+
+    if (!user) {
+      throw new ApiError(401, "User not found");
+    }
+
+    req.user = user;
+
+    next();
+
   }
 
-  const token = authHeader.split(" ")[1];
-
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET
-  );
-
-  const user = await User.findById(decoded.id)
-    .select("-password");
-
-  if (!user) {
-    throw new ApiError(401, "User not found");
-  }
-
-  req.user = user;
-
-  next();
-
-});
+);
