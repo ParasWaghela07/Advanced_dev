@@ -14,3 +14,17 @@ export const createProjectSchema = Joi.object({
     .valid("active", "completed")
 
 });
+
+export const updateProjectSchema = Joi.object({
+
+  title: Joi.string()
+    .min(3)
+    .max(100),
+
+  description: Joi.string()
+    .allow(""),
+
+  status: Joi.string()
+    .valid("active", "completed")
+
+});
