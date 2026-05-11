@@ -168,6 +168,8 @@ export const getSingleProjectService = async (
   }
   
 
+  
+
   // 🔐 ownership check
   if (
     project.owner._id.toString() !== ownerId.toString()
