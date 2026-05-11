@@ -166,6 +166,7 @@ export const getSingleProjectService = async (
   if (!project) {
     throw new ApiError(404, "Project not found");
   }
+  
 
   // 🔐 ownership check
   if (
