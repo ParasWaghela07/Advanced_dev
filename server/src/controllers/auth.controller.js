@@ -5,28 +5,46 @@ import {
 
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-export const registerUser = asyncHandler(async (req, res) => {
+import { ApiResponse } from "../utils/ApiResponse.js";
 
-  const user = await registerUserService(req.body);
+export const registerUser = asyncHandler(
 
-  return res.status(201).json({
-    success: true,
-    statusCode: 201,
-    message: "User registered successfully",
-    data: user
-  });
+  async (req, res) => {
 
-});
+    const user =
+      await registerUserService(req.body);
 
-export const loginUser = asyncHandler(async (req, res) => {
+    return res.status(201).json(
 
-  const data = await loginUserService(req.body);
+      new ApiResponse(
+        201,
+        "User registered successfully",
+        user
+      )
 
-  return res.status(200).json({
-    success: true,
-    statusCode: 200,
-    message: "Login successful",
-    data
-  });
+    );
 
-});
+  }
+
+);
+
+export const loginUser = asyncHandler(
+
+  async (req, res) => {
+
+    const data =
+      await loginUserService(req.body);
+
+    return res.status(200).json(
+
+      new ApiResponse(
+        200,
+        "Login successful",
+        data
+      )
+
+    );
+
+  }
+
+);

@@ -1,11 +1,12 @@
 import {
   createProjectService,
   getUserProjectsService,
-    updateProjectService,
-  deleteProjectService
+  updateProjectService,
+  deleteProjectService,
+  getSingleProjectService
 } from "../services/project.service.js";
 
-
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 import { asyncHandler } from "../utils/asyncHandler.js";
 
@@ -19,12 +20,15 @@ export const createProject = asyncHandler(
         req.user._id
       );
 
-    return res.status(201).json({
-      success: true,
-      statusCode: 201,
-      message: "Project created successfully",
-      data: project
-    });
+    return res.status(201).json(
+
+      new ApiResponse(
+        201,
+        "Project created successfully",
+        project
+      )
+
+    );
 
   }
 
@@ -40,14 +44,18 @@ export const getUserProjects = asyncHandler(
         req.query
       );
 
-    return res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Projects fetched successfully",
-      data: result.projects,
+    return res.status(200).json(
 
-      pagination: result.pagination
-    });
+      new ApiResponse(
+        200,
+        "Projects fetched successfully",
+        {
+          projects: result.projects,
+          pagination: result.pagination
+        }
+      )
+
+    );
 
   }
 
@@ -70,12 +78,15 @@ export const updateProject = asyncHandler(
 
       );
 
-    return res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Project updated successfully",
-      data: project
-    });
+    return res.status(200).json(
+
+      new ApiResponse(
+        200,
+        "Project updated successfully",
+        project
+      )
+
+    );
 
   }
 
@@ -95,11 +106,43 @@ export const deleteProject = asyncHandler(
 
     );
 
-    return res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Project deleted successfully"
-    });
+    return res.status(200).json(
+
+      new ApiResponse(
+        200,
+        "Project deleted successfully"
+      )
+
+    );
+
+  }
+
+);
+
+export const getSingleProject = asyncHandler(
+
+  async (req, res) => {
+
+    const project =
+      await getSingleProjectService(
+
+        req.params.id,
+
+        req.user._id,
+
+        req.user.role
+
+      );
+
+    return res.status(200).json(
+
+      new ApiResponse(
+        200,
+        "Project fetched successfully",
+        project
+      )
+
+    );
 
   }
 
