@@ -1,21 +1,13 @@
-import User from "../models/user.model.js";
+import { getAllUsersService } from "../services/user.service.js";
+
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-export const getAllUsers = asyncHandler(
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await getAllUsersService();
 
-  async (req, res) => {
-
-    const users = await User.find()
-      .select("-password");
-
-    return res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "Users fetched successfully",
-      data: users
-    });
-
-  }
-
-);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Users fetched successfully", users));
+});

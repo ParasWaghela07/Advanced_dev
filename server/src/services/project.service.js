@@ -52,13 +52,20 @@ export const getUserProjectsService = async (
   const totalDocuments =
     await Project.countDocuments(query);
 
-  const projects = await Project.find(query)
+const projects = await Project.find(query)
 
-    .sort({ createdAt: -1 })
+  .populate({
+    path: "owner",
+    select: "name email role"
+  })
 
-    .skip(skip)
+  .sort({ createdAt: -1 })
 
-    .limit(Number(limit));
+  .skip(skip)
+
+  .limit(Number(limit))
+
+  .lean();
 
   return {
 
@@ -136,5 +143,45 @@ export const deleteProjectService = async (
   }
 
   await project.deleteOne();
+
+};
+
+export const getSingleProjectService = async (
+  projectId,
+  ownerId,
+  userRole
+) => {
+
+  const project = await Project.findById(
+    projectId
+  )
+
+    .populate({
+      path: "owner",
+      select: "name email role"
+    })
+
+    .lean();
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+  
+
+  
+
+  // 🔐 ownership check
+  if (
+    project.owner._id.toString() !== ownerId.toString()
+    &&
+    userRole !== "admin"
+  ) {
+    throw new ApiError(
+      403,
+      "Access denied"
+    );
+  }
+
+  return project;
 
 };

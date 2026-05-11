@@ -4,7 +4,8 @@ import {
   createProject,
   getUserProjects,
     updateProject,
-  deleteProject
+  deleteProject,
+  getSingleProject
 } from "../controllers/project.controller.js";
 
 
@@ -31,6 +32,12 @@ router.get(
   "/",
   verifyJWT,
   getUserProjects
+);
+
+router.get(
+  "/:id",
+  verifyJWT,
+  getSingleProject
 );
 
 router.patch(
