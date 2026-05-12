@@ -1,41 +1,50 @@
 import Project from "../models/project.model.js";
 import { ApiError } from "../utils/ApiError.js";
+import redisClient from "../config/redis.js";
 
-export const createProjectService = async (
-  data,
-  ownerId
-) => {
-
+export const createProjectService = async (data, ownerId) => {
   const project = await Project.create({
     ...data,
-    owner: ownerId
+    owner: ownerId,
   });
 
-  return project;
+  // 🗑️ invalidate cache
+  const keys = await redisClient.keys(`projects:${ownerId}:*`);
 
+  if (keys.length > 0) {
+    await redisClient.del(keys);
+  }
+
+  return project;
 };
 
-export const getUserProjectsService = async (
-  ownerId,
-  queryParams
-) => {
+export const getUserProjectsService = async (ownerId, queryParams) => {
+  const { page = 1, limit = 5, search = "", status } = queryParams;
 
-  const {
-    page = 1,
-    limit = 5,
-    search = "",
-    status
-  } = queryParams;
+  // 🔑 unique cache key
+  const cacheKey = `projects:${ownerId}:${page}:${limit}:${search}:${status}`;
+
+  // 🔍 check cache
+  const cachedProjects = await redisClient.get(cacheKey);
+
+  // ✅ cache hit
+  if (cachedProjects) {
+    console.log("Projects Cache HIT");
+
+    return JSON.parse(cachedProjects);
+  }
+
+  console.log("Projects Cache MISS");
 
   // 🔥 build query
   const query = {
-    owner: ownerId
+    owner: ownerId,
   };
 
   // 🔍 search
   if (search) {
     query.$text = {
-      $search: search
+      $search: search,
     };
   }
 
@@ -45,52 +54,61 @@ export const getUserProjectsService = async (
   }
 
   // 📄 pagination
-  const skip =
-    (Number(page) - 1) * Number(limit);
+  const skip = (Number(page) - 1) * Number(limit);
 
   // 📊 total count
-  const totalDocuments =
-    await Project.countDocuments(query);
+  const totalDocuments = await Project.countDocuments(query);
 
-const projects = await Project.find(query)
+  const projects = await Project.find(query)
 
-  .populate({
-    path: "owner",
-    select: "name email role"
-  })
+    .select("title description status owner createdAt")
 
-  .sort({ createdAt: -1 })
+    .populate({
+      path: "owner",
+      select: "name email role",
+    })
 
-  .skip(skip)
+    .sort({ createdAt: -1 })
 
-  .limit(Number(limit))
+    .skip(skip)
 
-  .lean();
+    .limit(Number(limit))
 
-  return {
+    .lean();
 
+  const response = {
     projects,
 
     pagination: {
       totalDocuments,
-      currentPage: Number(page),
-      totalPages: Math.ceil(
-        totalDocuments / limit
-      ),
-      limit: Number(limit)
-    }
 
+      currentPage: Number(page),
+
+      totalPages: Math.ceil(totalDocuments / limit),
+
+      limit: Number(limit),
+    },
   };
 
-};
+  // 💾 store in redis
+  await redisClient.set(
+    cacheKey,
 
+    JSON.stringify(response),
+
+    {
+      EX: 60,
+    },
+  );
+
+  return response;
+};
 export const updateProjectService = async (
   projectId,
   ownerId,
   updateData,
-  userRole
+  userRole,
 ) => {
-
   const project = await Project.findById(projectId);
 
   if (!project) {
@@ -98,15 +116,8 @@ export const updateProjectService = async (
   }
 
   // 🔐 ownership check
-  if (
-    project.owner.toString() !== ownerId.toString()
-    &&
-    userRole !== "admin"
-  ) {
-    throw new ApiError(
-      403,
-      "You are not allowed to update this project"
-    );
+  if (project.owner.toString() !== ownerId.toString() && userRole !== "admin") {
+    throw new ApiError(403, "You are not allowed to update this project");
   }
 
   // 🔄 update
@@ -114,16 +125,16 @@ export const updateProjectService = async (
 
   await project.save();
 
-  return project;
+  const keys = await redisClient.keys(`projects:${ownerId}:*`);
 
+  if (keys.length > 0) {
+    await redisClient.del(keys);
+  }
+
+  return project;
 };
 
-export const deleteProjectService = async (
-  projectId,
-  ownerId,
-  userRole
-) => {
-
+export const deleteProjectService = async (projectId, ownerId, userRole) => {
   const project = await Project.findById(projectId);
 
   if (!project) {
@@ -131,34 +142,25 @@ export const deleteProjectService = async (
   }
 
   // 🔐 ownership check
-  if (
-    project.owner.toString() !== ownerId.toString()
-    &&
-    userRole !== "admin"
-  ) {
-    throw new ApiError(
-      403,
-      "You are not allowed to delete this project"
-    );
+  if (project.owner.toString() !== ownerId.toString() && userRole !== "admin") {
+    throw new ApiError(403, "You are not allowed to delete this project");
+  }
+
+  const keys = await redisClient.keys(`projects:${ownerId}:*`);
+
+  if (keys.length > 0) {
+    await redisClient.del(keys);
   }
 
   await project.deleteOne();
-
 };
 
-export const getSingleProjectService = async (
-  projectId,
-  ownerId,
-  userRole
-) => {
-
-  const project = await Project.findById(
-    projectId
-  )
+export const getSingleProjectService = async (projectId, ownerId, userRole) => {
+  const project = await Project.findById(projectId)
 
     .populate({
       path: "owner",
-      select: "name email role"
+      select: "name email role",
     })
 
     .lean();
@@ -166,22 +168,14 @@ export const getSingleProjectService = async (
   if (!project) {
     throw new ApiError(404, "Project not found");
   }
-  
-
-  
 
   // 🔐 ownership check
   if (
-    project.owner._id.toString() !== ownerId.toString()
-    &&
+    project.owner._id.toString() !== ownerId.toString() &&
     userRole !== "admin"
   ) {
-    throw new ApiError(
-      403,
-      "Access denied"
-    );
+    throw new ApiError(403, "Access denied");
   }
 
   return project;
-
 };
