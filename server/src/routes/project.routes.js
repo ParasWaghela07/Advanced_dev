@@ -3,12 +3,10 @@ import express from "express";
 import {
   createProject,
   getUserProjects,
-    updateProject,
+  updateProject,
   deleteProject,
-  getSingleProject
+  getSingleProject,
 } from "../controllers/project.controller.js";
-
-
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -16,41 +14,19 @@ import { validate } from "../middlewares/validate.js";
 
 import {
   createProjectSchema,
-  updateProjectSchema
+  updateProjectSchema,
 } from "../validations/project.validation.js";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  verifyJWT,
-  validate(createProjectSchema),
-  createProject
-);
+router.post("/", verifyJWT, validate(createProjectSchema), createProject);
 
-router.get(
-  "/",
-  verifyJWT,
-  getUserProjects
-);
+router.get("/", verifyJWT, getUserProjects);
 
-router.get(
-  "/:id",
-  verifyJWT,
-  getSingleProject
-);
+router.get("/:id", verifyJWT, getSingleProject);
 
-router.patch(
-  "/:id",
-  verifyJWT,
-  validate(updateProjectSchema),
-  updateProject
-);
+router.patch("/:id", verifyJWT, validate(updateProjectSchema), updateProject);
 
-router.delete(
-  "/:id",
-  verifyJWT,
-  deleteProject
-);
+router.delete("/:id", verifyJWT, deleteProject);
 
 export default router;
