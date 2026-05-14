@@ -1,4 +1,4 @@
-import { getAllUsersService } from "../services/user.service.js";
+import { getAllUsersService,getProfileService } from "../services/user.service.js";
 
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -11,3 +11,28 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, "Users fetched successfully", users));
 });
+
+
+export const getProfile =
+asyncHandler(
+
+  async (req, res) => {
+
+    const user =
+      await getProfileService(
+        req.user._id
+      );
+
+    return res.status(200).json(
+
+      new ApiResponse(
+        200,
+        "Profile fetched successfully",
+        user
+      )
+
+    );
+
+  }
+
+);
