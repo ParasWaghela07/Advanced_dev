@@ -1,11 +1,13 @@
 import User from "../models/user.model.js";
 
 import { ApiError } from "../utils/ApiError.js";
-
-import { generateToken } from "../utils/generateToken.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/generateTokens.js";
+import jwt from "jsonwebtoken";
 
 export const registerUserService = async (data) => {
-
   const { name, email, password } = data;
 
   const existingUser = await User.findOne({ email });
@@ -17,20 +19,18 @@ export const registerUserService = async (data) => {
   const user = await User.create({
     name,
     email,
-    password
+    password,
   });
 
   return {
     id: user._id,
     name: user.name,
     email: user.email,
-    role: user.role
+    role: user.role,
   };
-
 };
 
 export const loginUserService = async (data) => {
-
   const { email, password } = data;
 
   // 🔍 find user
@@ -47,20 +47,118 @@ export const loginUserService = async (data) => {
     throw new ApiError(401, "Invalid credentials");
   }
 
-  // 🎟️ generate token
-  const token = generateToken({
-    id: user._id,
-    role: user.role
-  });
+  const accessToken = generateAccessToken(user._id, user.role);
+
+  const refreshToken = generateRefreshToken(user._id);
+
+  user.refreshToken = refreshToken;
+
+  await user.save();
 
   return {
-    token,
     user: {
       id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role
-    }
+      role: user.role,
+    },
+
+    accessToken,
+
+    refreshToken,
   };
+};
+
+export const refreshAccessTokenService =
+async (refreshToken) => {
+
+  if (!refreshToken) {
+
+    throw new ApiError(
+      401,
+      "Refresh token required"
+    );
+
+  }
+
+  let decoded;
+
+  console.log("Received refresh token:", refreshToken);
+
+  try {
+
+    // 🔐 verify token
+    decoded = jwt.verify(
+
+      refreshToken,
+
+      process.env.JWT_REFRESH_SECRET
+
+    );
+
+  } catch (error) {
+
+    throw new ApiError(
+      401,
+      "Invalid or expired refresh token"
+    );
+
+  }
+
+  const user =
+    await User.findById(
+      decoded.userId
+    );
+
+  if (!user) {
+
+    throw new ApiError(
+      401,
+      "User not found"
+    );
+
+  }
+
+  // 🔒 compare stored token
+  if (
+    user.refreshToken !== refreshToken
+  ) {
+
+    throw new ApiError(
+      401,
+      "Refresh token mismatch"
+    );
+
+  }
+
+  // 🔑 generate new access token
+  const newAccessToken =
+
+    generateAccessToken(
+      user._id,
+      user.role
+    );
+
+  return {
+
+    accessToken:
+      newAccessToken
+
+  };
+
+};
+
+export const logoutUserService =
+async (userId) => {
+
+  await User.findByIdAndUpdate(
+
+    userId,
+
+    {
+      refreshToken: null
+    }
+
+  );
 
 };
