@@ -7,6 +7,8 @@ import {
 } from "../utils/generateTokens.js";
 import jwt from "jsonwebtoken";
 
+import { emailQueue } from "../queues/email.queue.js";
+
 export const registerUserService = async (data) => {
   const { name, email, password } = data;
 
@@ -21,6 +23,36 @@ export const registerUserService = async (data) => {
     email,
     password,
   });
+
+  await emailQueue.add(
+    "welcomeEmail",
+
+    {
+      to: user.email,
+
+      subject: "Welcome to Adv Dev 🚀",
+
+      html: `
+
+      <h1>Welcome ${user.name}</h1>
+
+      <p>
+        Your account was created successfully.
+      </p>
+
+    `,
+    },
+
+    {
+      attempts: 3,
+
+      backoff: {
+        type: "exponential",
+
+        delay: 2000,
+      },
+    },
+  );
 
   return {
     id: user._id,
@@ -69,16 +101,9 @@ export const loginUserService = async (data) => {
   };
 };
 
-export const refreshAccessTokenService =
-async (refreshToken) => {
-
+export const refreshAccessTokenService = async (refreshToken) => {
   if (!refreshToken) {
-
-    throw new ApiError(
-      401,
-      "Refresh token required"
-    );
-
+    throw new ApiError(401, "Refresh token required");
   }
 
   let decoded;
@@ -86,79 +111,41 @@ async (refreshToken) => {
   console.log("Received refresh token:", refreshToken);
 
   try {
-
     // 🔐 verify token
     decoded = jwt.verify(
-
       refreshToken,
 
-      process.env.JWT_REFRESH_SECRET
-
+      process.env.JWT_REFRESH_SECRET,
     );
-
   } catch (error) {
-
-    throw new ApiError(
-      401,
-      "Invalid or expired refresh token"
-    );
-
+    throw new ApiError(401, "Invalid or expired refresh token");
   }
 
-  const user =
-    await User.findById(
-      decoded.userId
-    );
+  const user = await User.findById(decoded.userId);
 
   if (!user) {
-
-    throw new ApiError(
-      401,
-      "User not found"
-    );
-
+    throw new ApiError(401, "User not found");
   }
 
   // 🔒 compare stored token
-  if (
-    user.refreshToken !== refreshToken
-  ) {
-
-    throw new ApiError(
-      401,
-      "Refresh token mismatch"
-    );
-
+  if (user.refreshToken !== refreshToken) {
+    throw new ApiError(401, "Refresh token mismatch");
   }
 
   // 🔑 generate new access token
-  const newAccessToken =
-
-    generateAccessToken(
-      user._id,
-      user.role
-    );
+  const newAccessToken = generateAccessToken(user._id, user.role);
 
   return {
-
-    accessToken:
-      newAccessToken
-
+    accessToken: newAccessToken,
   };
-
 };
 
-export const logoutUserService =
-async (userId) => {
-
+export const logoutUserService = async (userId) => {
   await User.findByIdAndUpdate(
-
     userId,
 
     {
-      refreshToken: null
-    }
-
+      refreshToken: null,
+    },
   );
-
 };

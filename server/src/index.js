@@ -12,6 +12,8 @@ import { connectDB } from "./config/db.js";
 
 import { connectRedis } from "./config/redis.js";
 
+import "./workers/email.worker.js";
+
 const PORT = process.env.PORT || 5000;
 
 await connectDB();
