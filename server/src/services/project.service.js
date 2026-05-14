@@ -1,6 +1,8 @@
 import Project from "../models/project.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import redisClient from "../config/redis.js";
+import { io }
+from "../index.js";
 
 export const createProjectService = async (data, ownerId) => {
   const project = await Project.create({
@@ -124,6 +126,17 @@ export const updateProjectService = async (
   Object.assign(project, updateData);
 
   await project.save();
+
+io.to(ownerId.toString()).emit(
+
+  "projectUpdated",
+
+  {
+    message: "Project updated",
+    project
+  }
+
+);
 
   const keys = await redisClient.keys(`projects:${ownerId}:*`);
 
