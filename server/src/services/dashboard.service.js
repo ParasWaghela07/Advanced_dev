@@ -1,6 +1,7 @@
 import Project from "../models/project.model.js";
 import redisClient
 from "../config/redis.js";
+import logger from "../utils/logger.js";
 
 export const getDashboardStatsService =
 async (userId, userRole) => {
@@ -15,13 +16,13 @@ async (userId, userRole) => {
 
   if (cachedData) {
 
-    console.log("Cache HIT");
+    logger.info("Cache HIT");
 
     return JSON.parse(cachedData);
 
   }
 
-  console.log("Cache MISS");
+  logger.info("Cache MISS");
 
   // DB query
   const matchStage =

@@ -1,0 +1,99 @@
+2026-05-15T14:39:05.759Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:42:04.247Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:42:21.324Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:42:21.341Z
+          [INFO]:
+          Redis Connected
+2026-05-15T14:55:33.925Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:55:33.933Z
+          [INFO]:
+          Redis Connected
+2026-05-15T14:56:13.006Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:56:13.015Z
+          [INFO]:
+          Redis Connected
+2026-05-15T14:56:20.538Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:56:20.555Z
+          [INFO]:
+          Redis Connected
+2026-05-15T14:56:20.568Z
+          [INFO]:
+          Server running on port 4000
+2026-05-15T14:56:39.665Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:56:39.691Z
+          [INFO]:
+          Redis Connected
+2026-05-15T14:56:39.705Z
+          [INFO]:
+          Server running on port 4000
+2026-05-15T14:57:00.641Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T14:57:00.658Z
+          [INFO]:
+          Redis Connected
+2026-05-15T14:57:00.666Z
+          [INFO]:
+          Server running on port 4000
+2026-05-15T14:57:40.631Z
+          [ERROR]:
+          TokenExpiredError: jwt expired
+    at C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:101:10)
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/middlewares/auth.middleware.js:24:25
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/utils/asyncHandler.js:3:21
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+2026-05-15T14:59:42.977Z
+          [ERROR]:
+          TokenExpiredError: jwt expired
+    at C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:101:10)
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/middlewares/auth.middleware.js:24:25
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/utils/asyncHandler.js:3:21
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+2026-05-15T15:03:50.998Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T15:03:51.016Z
+          [INFO]:
+          Redis Connected
+2026-05-15T15:03:51.025Z
+          [INFO]:
+          Server running on port 4000
+2026-05-15T15:10:31.882Z
+          [INFO]:
+          MongoDB Connected
+2026-05-15T15:10:31.895Z
+          [INFO]:
+          Redis Connected
+2026-05-15T15:10:31.900Z
+          [INFO]:
+          Server running on port 4000
+2026-05-15T15:10:34.679Z
+          [INFO]:
+          POST
+    /api/auth/login

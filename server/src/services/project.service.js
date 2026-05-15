@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import redisClient from "../config/redis.js";
 import { io }
 from "../index.js";
+import logger from "../utils/logger.js";
 
 export const createProjectService = async (data, ownerId) => {
   const project = await Project.create({
@@ -31,12 +32,12 @@ export const getUserProjectsService = async (ownerId, queryParams) => {
 
   // ✅ cache hit
   if (cachedProjects) {
-    console.log("Projects Cache HIT");
+    logger.info("Projects Cache HIT");
 
     return JSON.parse(cachedProjects);
   }
 
-  console.log("Projects Cache MISS");
+  logger.info("Projects Cache MISS");
 
   // 🔥 build query
   const query = {

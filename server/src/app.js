@@ -11,6 +11,10 @@ import cookieParser
 from "cookie-parser";
 
 import { errorHandler } from "./middlewares/error.middleware.js";
+import {
+  requestLogger
+}
+from "./middlewares/logger.middleware.js";
 
 const app = express();
 
@@ -20,6 +24,7 @@ app.use(express.json());
 app.use(apiLimiter);
 app.use(cookieParser());
 
+app.use(requestLogger);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
@@ -27,5 +32,6 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/uploads", uploadRoutes);
 
 app.use(errorHandler);
+
 
 export default app;
