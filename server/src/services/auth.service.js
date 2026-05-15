@@ -108,8 +108,6 @@ export const refreshAccessTokenService = async (refreshToken) => {
 
   let decoded;
 
-  console.log("Received refresh token:", refreshToken);
-
   try {
     // 🔐 verify token
     decoded = jwt.verify(

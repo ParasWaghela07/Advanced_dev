@@ -1,0 +1,26 @@
+2026-05-15T14:57:40.631Z
+          [ERROR]:
+          TokenExpiredError: jwt expired
+    at C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:101:10)
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/middlewares/auth.middleware.js:24:25
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/utils/asyncHandler.js:3:21
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+2026-05-15T14:59:42.977Z
+          [ERROR]:
+          TokenExpiredError: jwt expired
+    at C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\jsonwebtoken\verify.js:101:10)
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/middlewares/auth.middleware.js:24:25
+    at file:///C:/Users/acer/Desktop/Adv-Dev/server/src/utils/asyncHandler.js:3:21
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\acer\Desktop\Adv-Dev\server\node_modules\router\lib\layer.js:152:17)

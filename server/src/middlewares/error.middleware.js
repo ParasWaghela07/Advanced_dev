@@ -1,9 +1,21 @@
-export const errorHandler = (err, req, res, next) => {
+import logger
+from "../utils/logger.js";
 
-  return res.status(err.statusCode || 500).json({
+export const errorHandler =
+(error, req, res, next) => {
+
+  logger.error(error.stack);
+
+  return res.status(
+    error.statusCode || 500
+  ).json({
+
     success: false,
-    statusCode: err.statusCode || 500,
-    message: err.message || "Internal Server Error"
+
+    message:
+      error.message ||
+      "Internal Server Error"
+
   });
 
 };

@@ -1,7 +1,7 @@
 import { transporter }
 
 from "../config/mail.js";
-
+import logger from "../utils/logger.js";
 export const sendEmail =
 async ({
 
@@ -31,7 +31,7 @@ async ({
       mailOptions
     );
 
-  console.log(
+  logger.info(
     "Email sent:",
     info.messageId
   );

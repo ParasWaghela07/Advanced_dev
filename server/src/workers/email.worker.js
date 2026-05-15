@@ -5,7 +5,7 @@ from "bullmq";
 import { sendEmail }
 
 from "../services/email.service.js";
-
+import logger from "../utils/logger.js";
 const emailWorker =
 new Worker(
 
@@ -13,11 +13,11 @@ new Worker(
 
   async (job) => {
 
-    console.log(
+    logger.info(
       "📩 Processing Email Job"
     );
 
-    console.log(job.data);
+    logger.info("Email Job Data:", job.data);
 
     await sendEmail({
 
@@ -29,9 +29,7 @@ new Worker(
 
     });
 
-    console.log(
-      "✅ Email Sent Successfully"
-    );
+    logger.info("✅ Email Sent Successfully");
 
   },
 
@@ -53,9 +51,7 @@ emailWorker.on(
 
   (job) => {
 
-    console.log(
-      `✅ Job ${job.id} completed`
-    );
+    logger.info(`✅ Job ${job.id} completed`);
 
   }
 
@@ -67,11 +63,9 @@ emailWorker.on(
 
   (job, err) => {
 
-    console.log(
-      `❌ Job ${job.id} failed`
-    );
+    logger.error(`❌ Job ${job.id} failed`);
 
-    console.log(err);
+    logger.error(err);
 
   }
 
